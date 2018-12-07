@@ -1,0 +1,19 @@
+---
+# playbook to run on a new machine to install python and ssh keys for ansible
+
+- hosts: all
+  gather_facts: False
+  remote_user: ansible
+  become: yes
+  become_user: ansible
+  become_method: sudo
+
+  tasks:
+    - name: Install python2
+      raw: test -e /usr/bin/python || (apt-get update && apt-get install -y python)
+
+    - name: Add authorized keys to host
+      authorized_key: 
+        user: ansible
+        exclusive: no
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
